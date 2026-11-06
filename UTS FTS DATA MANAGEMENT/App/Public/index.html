@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cari Resep</title>   
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Young+Serif&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Cari Resep</h1>
+      <p id="sub" class="sub">Menyambungkan ke database...</p>
+    </header>
+
+    <form id="form-cari" role="search" autocomplete="off">
+      <label for="q" class="sr-only">Kata pencarian</label>
+      <input id="q" name="q" type="search" placeholder="mis. chicken garlic soup" maxlength="200" autofocus>
+      <button type="submit">Cari</button>
+    </form>
+
+    <div class="contoh" id="contoh" aria-label="Contoh pencarian"></div>
+
+    <details class="pengaturan">
+      <summary>Pengaturan hasil</summary>
+      <div class="grid-pengaturan">
+        <label>Jumlah hasil
+          <input id="limit" type="number" min="5" max="30" value="10">
+        </label>
+        <label>Rating minimum
+          <select id="minRating">
+            <option value="0">Semua</option>
+            <option value="3">3 ke atas</option>
+            <option value="4">4 ke atas</option>
+            <option value="4.5">4,5 ke atas</option>
+          </select>
+        </label>
+        <label>Fungsi ranking
+          <select id="rank">
+            <option value="ts_rank_cd">ts_rank_cd (kedekatan kata)</option>
+            <option value="ts_rank">ts_rank (frekuensi dan bobot)</option>
+          </select>
+        </label>
+        <label>Pengaruh rating pada urutan: <output id="ratingWeightOut">0,2</output>
+          <input id="ratingWeight" type="range" min="0" max="1" step="0.1" value="0.2">
+        </label>
+        <label class="centang">
+          <input id="useIndex" type="checkbox" checked>
+          Pakai index
+        </label>
+      </div>
+      <p class="catatan">Mematikan index tidak menghapusnya. PostgreSQL hanya dilarang memakainya untuk query ini.</p>
+    </details>
+
+    <div class="tabs" role="tablist" aria-label="Tampilan">
+      <button role="tab" id="tab-hasil" aria-controls="panel-hasil" aria-selected="true">Hasil</button>
+      <button role="tab" id="tab-cara" aria-controls="panel-cara" aria-selected="false" tabindex="-1">Cara kerja</button>
+      <button role="tab" id="tab-performa" aria-controls="panel-performa" aria-selected="false" tabindex="-1">Performa</button>
+    </div>
+
+    <section id="panel-hasil" role="tabpanel" aria-labelledby="tab-hasil">
+      <p id="ringkas" class="ringkas" aria-live="polite"></p>
+      <div id="hasil">
+        <p class="kosong">Ketik nama masakan atau bahan, misalnya <em>chicken garlic soup</em>.
+          Pakai tanda kutip untuk frasa (<code>"fried chicken"</code>), tanda minus untuk
+          mengecualikan kata (<code>-spicy</code>), dan <code>or</code> untuk salah satu kata.</p>
+      </div>
+    </section>
+
+    <section id="panel-cara" role="tabpanel" aria-labelledby="tab-cara" hidden>
+      <div id="cara"></div>
+    </section>
+
+    <section id="panel-performa" role="tabpanel" aria-labelledby="tab-performa" hidden>
+      <p>Bandingkan waktu query yang sama dengan dan tanpa index. Tanpa index berarti PostgreSQL
+        dilarang memakai index selama pengukuran, jadi seluruh tabel dibaca. Index sendiri tidak dihapus.</p>
+      <h2>Index pada tabel recipes</h2>
+      <div id="daftar-index" class="gulir"></div>
+      <button type="button" id="tombol-bandingkan" class="utama">Bandingkan sekarang</button>
+      <div id="performa"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
